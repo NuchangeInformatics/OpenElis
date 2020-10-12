@@ -35,6 +35,16 @@ public class ReferenceDataTest {
     private String resultType;
     private String testUnitOfMeasure;
 
+    private String referenceInfo;
+
+    public String getReferenceInfo() {
+        return referenceInfo;
+    }
+
+    public void setReferenceInfo(String referenceInfo) {
+        this.referenceInfo = referenceInfo;
+    }
+
     public Collection<CodedTestAnswer> getCodedTestAnswer() {
         return codedTestAnswer;
     }

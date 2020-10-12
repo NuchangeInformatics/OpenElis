@@ -108,6 +108,16 @@ public class Test extends EnumValueItemImpl {
 	private Boolean isReferredOut = false;
 
 	private  Boolean isReferredOutValueChanged = false;
+	public String getReferenceInfo() {
+		return referenceInfo;
+	}
+
+	public void setReferenceInfo(String referenceInfo) {
+		this.referenceInfo = referenceInfo;
+	}
+
+	private String referenceInfo;
+
 
 	public Test() {
 		super();

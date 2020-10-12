@@ -97,6 +97,9 @@ public interface TestDAO extends BaseDAO {
 	public String getNameForTestId(String id);
 	public String getDescriptionForTestId(String id);
 
+	public String getReferenceInfoForTestId(String id);
+	public String getReferenceInfoForTestName(String name);
+
 	public Test getTestById(String testId) throws LIMSRuntimeException;
 
     public List<NonNumericTests> getAllNonNumericTests(List<Integer> testIds);
