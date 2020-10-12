@@ -50,6 +50,10 @@ function generateAllLinksForOrder(order, alwaysValidate){
     var resultIcon = '<img id="actionIcon" src="images/result.svg" title="'+resultMessage+'">';
     var enterResultLink = "<a id='result' href='AccessionResults.do?accessionNumber=" + order.accessionNumber + "&referer=LabDashboard"+"'>"+resultIcon+"</a>";
 
+    var labelMessage = jQuery("#translatedColumnNames").attr("data-link-label");
+    var labelIcon = '<img style="cursor: pointer" id="actionIcon" src="images/sampleLabelPrint.png" title="'+labelMessage+'">';
+    var sampleLabelLink = "<a class='label' accessionNumber='"+order.accessionNumber+"' stNumber='"+order.stNumber+"' collectionDate='"+order.collectionDate+"'>"+labelIcon+"</a>";
+
     if(alwaysValidate){
         //TODO: &type= is required in the url because of a bug I can't find the source of. The bug causes people without
         var validateMessage = jQuery("#translatedColumnNames").attr("data-link-validate");
@@ -57,7 +61,7 @@ function generateAllLinksForOrder(order, alwaysValidate){
         var validationLink = "<a id='validate' href='ResultValidationForAccessionNumber.do?accessionNumber=" + order.accessionNumber + "&patientId=" + order.stNumber + "&referer=LabDashboard&type=&test='>"+validateIcon+"</a>";
         return enterResultLink + " | " + validationLink + " | " + generateLinkForPrint(order);
     }
-    return enterResultLink + " | " + generateLinkForPrint(order);
+    return sampleLabelLink + " | " + enterResultLink + " | " + generateLinkForPrint(order);
 }
 
 function getColumnsForTodayOrder(alwaysValidate) {
