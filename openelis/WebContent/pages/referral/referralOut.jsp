@@ -11,6 +11,8 @@
                 java.util.List" %>
     <%@ page import="java.util.Locale" %>
     <%@ page import="org.apache.commons.lang3.StringUtils" %>
+	<%@ page import="us.mn.state.health.lims.siteinformation.daoimpl.SiteInformationDAOImpl" %>
+	<%@ page import="java.net.URLDecoder" %>
 
 
     <%@ taglib uri="/tags/struts-bean"		prefix="bean" %>
@@ -20,7 +22,7 @@
 <bean:define id="formName"	value='<%=(String) request.getAttribute(IActionConstants.FORM_NAME)%>' />
 <bean:define id="nonNumericTests" name='<%=formName %>' property="nonNumericTests" type="List<NonNumericTests>" />
 <bean:define id="patientSTNumber"	value='<%=request.getParameter("patientSTNumber") == null || request.getParameter("patientSTNumber").isEmpty() ? "" : request.getParameter("patientSTNumber")%>' />
-
+<%! private static final String UPLOADED_RESULTS_DIRECTORY = "uploadedResultsDirectory"; %>
 <script type="text/javascript" src="scripts/jquery.ui.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/jquery.asmselect.js?ver=<%= Versioning.getBuildNumber() %>"></script>
 <script type="text/javascript" src="scripts/utilities.js?ver=<%= Versioning.getBuildNumber() %>"></script>
@@ -590,9 +592,10 @@ var referralPage = {
     <th width="16px">&nbsp;</th>
     <th><bean:message key="result.result"/></th>
     <th><bean:message key="result.abnormal"/></th>
+	<th width="100px">Mark as Done</th>
     <th><bean:message key="referral.report.date"/></th>
     <th><bean:message key="label.button.cancel.referral"/></th>
-	<th width="5%"><bean:message key="result.notes"/></th>  
+	<th width="5%"><bean:message key="result.notes"/></th>
 	<th><bean:message key="result.files"/></th>
 </tr>
   <logic:iterate id="referralItems" name="<%=formName%>"  property="referralItems" indexId="index" type="ReferralItem" >
@@ -616,7 +619,9 @@ var referralPage = {
     	</td>
     	<td colspan="8" class="HeadSeperator" >
     		<bean:message key="referral.request.date"/>: <b><bean:write name="referralItems" property="referralDate"/></b>
-    	</td>
+		</td>
+		<td colspan="8" class="HeadSeperator" >
+		</td>
 	</tr>
 	<tr class='<%=rowColor%>Head' id='<%="referralRow_" + index%>' >
 		<td colspan="2">
@@ -628,6 +633,9 @@ var referralPage = {
 		<td colspan="6">
 			<bean:message key="result.result"/>: <b><bean:write name="referralItems" property="referralResults"/></b>
 		</td>
+		<td colspan="6">
+		</td>
+
 	</tr>
 	<tr class='<%=rowColor%>' id='<%="referralRow_" + index%>' >
 		<td>
@@ -710,6 +718,13 @@ var referralPage = {
                     value='y'
                     onchange='<%="markModified(\'" + index + "\'); " %>' property="abnormal"/>
         </td>
+	<td>
+		<html:checkbox
+				name='referralItems'
+				indexed="true"
+				value='y'
+				onchange='<%="markModified(\'" + index + "\'); " %>' property="markAsDone"/>
+		</td>
 		<td>
 			<html:text name='referralItems'
 					   property="referredReportDate"
@@ -868,7 +883,7 @@ function /*void*/ makeDirty(){
 		showSuccessMessage(false); //refers to last save
 	}
 	// Adds warning when leaving page if content has been entered into makeDirty form fields
-	function formWarning(){ 
+	function formWarning(){
     return "<bean:message key="banner.menu.dataLossWarning"/>";
 	}
 	window.onbeforeunload = formWarning;

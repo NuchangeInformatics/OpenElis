@@ -57,6 +57,15 @@ public class ReferralItem implements IReferralResultTest, Serializable {
     private boolean abnormal;
     private FormFile uploadedFile;
     private String uploadedFileName;
+    private boolean markAsDone;
+
+    public boolean isMarkAsDone() {
+        return markAsDone;
+    }
+
+    public void setMarkAsDone(boolean markAsDone) {
+        this.markAsDone = markAsDone;
+    }
 
     public String getReferralId() {
         return referralId;

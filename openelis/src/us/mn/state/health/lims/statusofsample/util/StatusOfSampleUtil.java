@@ -95,7 +95,8 @@ public class StatusOfSampleUtil {
         NonConforming_depricated,
         ReferredIn,
         Finalized,
-        FinalizedRO
+        FinalizedRO,
+        MarkAsDone
     }
 
     public enum RecordStatus {
@@ -525,6 +526,8 @@ public class StatusOfSampleUtil {
             case "Finalized RO":
                 analysisStatusToObjectMap.put(AnalysisStatus.FinalizedRO, status);
                 break;
+            case "Marked As Done":
+                analysisStatusToObjectMap.put(AnalysisStatus.MarkAsDone,status);
             case "NonConforming":
                 analysisStatusToObjectMap.put(AnalysisStatus.NonConforming_depricated, status);
                 break;

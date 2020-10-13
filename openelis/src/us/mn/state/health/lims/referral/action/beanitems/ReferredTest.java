@@ -38,6 +38,17 @@ public class ReferredTest implements IReferralResultTest {
     private boolean abnormal;
     private String uploadedFileName;
     private FormFile uploadedFile;
+	private boolean markAsDone;
+
+	@Override
+	public boolean isMarkAsDone() {
+		return markAsDone;
+	}
+
+	@Override
+	public void setMarkAsDone(boolean markAsDone) {
+		this.markAsDone = markAsDone;
+	}
 
     public String getReferralId() {
         return referralId;
