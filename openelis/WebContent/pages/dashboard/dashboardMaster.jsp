@@ -119,6 +119,7 @@ basePath = path + "/";
         data-link-result = '<bean:message key="dashboard.sample.column.link.result"/>'
         data-link-validate = '<bean:message key="dashboard.sample.column.link.validate"/>'
         data-link-print = '<bean:message key="dashboard.sample.column.link.print"/>'
+        data-link-label = '<bean:message key="dashboard.sample.column.link.label"/>'
     ></span>
     <div id="tabs">
         <span class="samplesToCollect sample_title_dashboard"><bean:message key="dashboard.msg.samplesToCollect"/></span>
@@ -359,6 +360,13 @@ basePath = path + "/";
         jQuery('#collectionDate2').text(collectionDate);
 
     }
+var showLabelDetailsWithoutPatientDetails = function(stn,collectionDate) {
+        jQuery('#patientId').text(stn);
+        jQuery('#patientId2').text(stn);
+        jQuery('#collectionDate').text(collectionDate);
+        jQuery('#collectionDate2').text(collectionDate);
+
+    }
 
     function labelSelected(stNumber, an,collectionDate,jQuery) {
         new Ajax.Request ('ajaxQueryXML', {
@@ -370,20 +378,27 @@ basePath = path + "/";
                 coDate=coDate.split("-");
                 console.log(coDate);
                 coDate=coDate[2]+"/"+coDate[1]+"/"+coDate[0];
-                // var cotime=OpenElis.Utils.getTime(collectionDate.slice(11,19));
-                collectionDate=coDate;
+                var cotime=OpenElis.Utils.getTime(collectionDate.slice(11,19));
+                collectionDate=coDate+" "+cotime;
 
 
-                showLabelDetails(
-                    OpenElis.Utils.getXMLValue(xhr.responseXML, 'firstName'),
-                    OpenElis.Utils.getXMLValue(xhr.responseXML, 'middleName'),
-                    OpenElis.Utils.getXMLValue(xhr.responseXML, 'lastName'),
-                    OpenElis.Utils.getXMLValue(xhr.responseXML, 'gender'),
-                    OpenElis.Utils.calculateAge(OpenElis.Utils.getXMLValue(xhr.responseXML, 'dob'), datePattern),
-                    stNumber,
-                    collectionDate
+                var showPatientDetails = '<%=SystemConfiguration.getInstance().showPatientDetailsInSampleLabelPrint()%>';
+                if(showPatientDetails==='true') {
+                    showLabelDetails(
+                        OpenElis.Utils.getXMLValue(xhr.responseXML, 'firstName'),
+                        OpenElis.Utils.getXMLValue(xhr.responseXML, 'middleName'),
+                        OpenElis.Utils.getXMLValue(xhr.responseXML, 'lastName'),
+                        OpenElis.Utils.getXMLValue(xhr.responseXML, 'gender'),
+                        OpenElis.Utils.calculateAge(OpenElis.Utils.getXMLValue(xhr.responseXML, 'dob'), datePattern),
+                        stNumber,
+                        collectionDate
+                    );
+                }
+                else
+                {
+                    showLabelDetailsWithoutPatientDetails(stNumber,collectionDate);
 
-                );
+                }
                 jQuery(".accessionNumber").html(an);
                 jQuery("#barcode").JsBarcode(an,{
                     width:1.1,

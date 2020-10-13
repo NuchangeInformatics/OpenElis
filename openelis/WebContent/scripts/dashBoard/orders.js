@@ -59,7 +59,7 @@ function generateAllLinksForOrder(order, alwaysValidate){
         var validateMessage = jQuery("#translatedColumnNames").attr("data-link-validate");
         var validateIcon = '<img id="actionIcon" src="images/validate.svg" title="'+validateMessage+'">';
         var validationLink = "<a id='validate' href='ResultValidationForAccessionNumber.do?accessionNumber=" + order.accessionNumber + "&patientId=" + order.stNumber + "&referer=LabDashboard&type=&test='>"+validateIcon+"</a>";
-        return enterResultLink + " | " + validationLink + " | " + generateLinkForPrint(order);
+        return sampleLabelLink + " | " + enterResultLink + " | " + validationLink + " | " + generateLinkForPrint(order);
     }
     return sampleLabelLink + " | " + enterResultLink + " | " + generateLinkForPrint(order);
 }

@@ -318,6 +318,14 @@ public class SystemConfiguration {
 		}
 		return "";
 	}
+	public String showPatientDetailsInSampleLabelPrint(){
+		String def = properties
+				.getProperty("sampleLabelPrint.showPatientDetail");
+		if (def != null) {
+			return def;
+		}
+		return "false";
+	}
 
 	//bugzilla 1387 rename this method so more generic
 	public String getHumanDomain() {
