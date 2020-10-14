@@ -505,14 +505,14 @@ public abstract class HaitiPatientReport extends Report {
             if (StatusOfSampleUtil.getStatusID(AnalysisStatus.Canceled).equals(reportAnalysis.getStatusId())) {
                 data.setResult(StringUtil.getMessageForKey("report.test.status.canceled"));
             } else if (REFERRAL_STATUS_ID.equals(reportAnalysis.getStatusId())) {
-                if (noResults(resultList)) {
+//                if (noResults(resultList)) {
                     setNote(data, resultList);
                     data.setResult(StringUtil.getMessageForKey("report.test.status.referredOut"));
-                } else {
-                    setAppropriateResults(resultList, data);
-                    setReferredResult(data, resultList.get(0));
-                    setNormalRange(data, test, resultList.get(0));
-                }
+//                } else {
+//                    setAppropriateResults(resultList, data);
+//                    setReferredResult(data, resultList.get(0));
+//                    setNormalRange(data, test, resultList.get(0));
+//                }
             } else if (noResults(resultList) || !(StatusOfSampleUtil.getStatusID(AnalysisStatus.Finalized).equals(reportAnalysis.getStatusId()) || StatusOfSampleUtil.getStatusID(AnalysisStatus.FinalizedRO).equals(reportAnalysis.getStatusId()))) {
                 sampleCompleteMap.put(reportSample.getAccessionNumber(), Boolean.FALSE);
                 setNote(data, resultList);

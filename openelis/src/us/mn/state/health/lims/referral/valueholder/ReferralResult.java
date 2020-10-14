@@ -41,7 +41,6 @@ public class ReferralResult extends BaseObject {
     private Timestamp referralReportDate;
     private ValueHolderInterface result = new ValueHolder();
 
-
     public String getId() {
         return id;
     }
@@ -115,9 +114,7 @@ public class ReferralResult extends BaseObject {
         getResult().setSortOrder("0");
         getResult().setMinNormal(limit.getLowNormal());
         getResult().setMaxNormal(limit.getHighNormal());
-        if(StringUtil.isNullorNill(getResult().getUploadedFileName())) {
-            getResult().setUploadedFileName(referredTest.getUploadedFileName());
-        }
+        getResult().setUploadedFileName(referredTest.getUploadedFileName());
         String limitId = limit.getId();
         getResult().setResultLimitId(!StringUtil.isNullorNill(limitId) ? Integer.parseInt(limitId) : null);
 
