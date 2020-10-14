@@ -32,6 +32,7 @@ public class Order {
     private String source;
     private int pendingTestCount;
     private int pendingValidationCount;
+    private int referredTestCount;
     private int totalTestCount;
     private Date collectionDate;
     private boolean isPrinted;
@@ -44,7 +45,7 @@ public class Order {
     }
 
     public Order(String accessionNumber, String uuid, String orderId, String stNumber, String firstName, String middleName, String lastName, String source, boolean isCompleted, boolean isPrinted,
-                 int pendingTestCount, int pendingValidationCount, int totalTestCount, Date collectionDate, Date enteredDate, String comments, String sectionNames) {
+                 int pendingTestCount, int pendingValidationCount,int referredTestCount, int totalTestCount, Date collectionDate, Date enteredDate, String comments, String sectionNames) {
         this.accessionNumber = accessionNumber;
         this.uuid = uuid;
         this.orderId = orderId;
@@ -57,6 +58,7 @@ public class Order {
         this.isPrinted = isPrinted;
         this.pendingTestCount = pendingTestCount;
         this.pendingValidationCount = pendingValidationCount;
+        this.referredTestCount = referredTestCount;
         this.totalTestCount = totalTestCount;
         this.collectionDate = collectionDate;
         this.enteredDate = enteredDate;
@@ -98,6 +100,14 @@ public class Order {
 
     public String getSource() {
         return source;
+    }
+
+    public int getReferredTestCount() {
+        return referredTestCount;
+    }
+
+    public void setReferredTestCount(int referredTestCount) {
+        this.referredTestCount = referredTestCount;
     }
 
     public void setSource(String source) {
@@ -215,6 +225,7 @@ public class Order {
         result = 31 * result + (source != null ? source.hashCode() : 0);
         result = 31 * result + pendingTestCount;
         result = 31 * result + pendingValidationCount;
+        result = 31 * result + referredTestCount;
         result = 31 * result + totalTestCount;
         result = 31 * result + (collectionDate != null ? collectionDate.hashCode() : 0);
         result = 31 * result + (enteredDate != null ? enteredDate.hashCode() : 0);

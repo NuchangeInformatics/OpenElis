@@ -21,6 +21,7 @@ String path = "";
 String basePath = "";
 String serverNow = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
 Boolean alwaysValidate = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.ALWAYS_VALIDATE_RESULTS, "true");
+Boolean showReferredTestsCount = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.SHOW_REFERRED_TESTS_COUNT, "true");
 %>
 
 <%
@@ -113,6 +114,7 @@ basePath = path + "/";
         data-accessionNumber = '<bean:message key="dashboard.sample.column.accessionNumber"/>'
         data-pendingTests = '<bean:message key="dashboard.sample.column.pendingTests"/>'
         data-pendingValidation = '<bean:message key="dashboard.sample.column.pendingValidation"/>'
+        data-referredTests = '<bean:message key="dashboard.sample.column.referredTests"/>'
         data-completed = '<bean:message key="dashboard.sample.column.completed"/>'
         data-printed = '<bean:message key="dashboard.sample.column.printed"/>'
         data-link-collectSample = '<bean:message key="dashboard.sample.column.link.collectSample"/>'
@@ -239,22 +241,22 @@ basePath = path + "/";
 
        showStats(todayStats)
 
-        var todaySamplesToCollectObject = new order("#todaySamplesToCollectListContainer-slick-grid", todaySampleNotCollectedList, generateAllLinksForOrder, getColumnsForSampleNotCollected, false);
+        var todaySamplesToCollectObject = new order("#todaySamplesToCollectListContainer-slick-grid", todaySampleNotCollectedList, generateAllLinksForOrder, getColumnsForSampleNotCollected, false, false);
         var dataViewForTodaySamplesToCollect = new Slick.Data.DataView();
         var gridForTodaySamplesToCollect = new Slick.Grid(todaySamplesToCollectObject.div, dataViewForTodaySamplesToCollect, todaySamplesToCollectObject.columns,options);
         createGrid(gridForTodaySamplesToCollect, dataViewForTodaySamplesToCollect, todaySamplesToCollectObject, onRowSelection);
 
-        var backlogSamplesToCollectObject = new order("#backlogSamplesToCollectListContainer-slick-grid", backlogSampleNotCollectedList, generateAllLinksForOrder, getColumnsForSampleNotCollected, false);
+        var backlogSamplesToCollectObject = new order("#backlogSamplesToCollectListContainer-slick-grid", backlogSampleNotCollectedList, generateAllLinksForOrder, getColumnsForSampleNotCollected, false, false);
         var dataViewForBacklogSamplesToCollect = new Slick.Data.DataView();
         var gridForBacklogSamplesToCollect = new Slick.Grid(backlogSamplesToCollectObject.div, dataViewForBacklogSamplesToCollect, backlogSamplesToCollectObject.columns,options);
         createGrid(gridForBacklogSamplesToCollect, dataViewForBacklogSamplesToCollect, backlogSamplesToCollectObject, onRowSelection);
 
-        var todayOrdersObject = new order("#todaySamplesCollectedListContainer-slick-grid", todayOrderList, generateAllLinksForOrder, getColumnsForTodayOrder, <%= alwaysValidate%>);
+        var todayOrdersObject = new order("#todaySamplesCollectedListContainer-slick-grid", todayOrderList, generateAllLinksForOrder, getColumnsForTodayOrder, <%= alwaysValidate%>, <%= showReferredTestsCount%>);
         var dataViewForTodayTab = new Slick.Data.DataView();
         var gridForTodayOrder = new Slick.Grid(todayOrdersObject.div, dataViewForTodayTab, todayOrdersObject.columns,options);
         createGrid(gridForTodayOrder, dataViewForTodayTab, todayOrdersObject, onRowSelection);
 
-        var backlogOrdersObject = new order("#backlogSamplesCollectedListContainer-slick-grid", backlogOrderList, generateAllLinksForOrder, getColumnsForBacklogOrder, <%= alwaysValidate%>);
+        var backlogOrdersObject = new order("#backlogSamplesCollectedListContainer-slick-grid", backlogOrderList, generateAllLinksForOrder, getColumnsForBacklogOrder, <%= alwaysValidate%>, <%= showReferredTestsCount%>);
         var dataViewForBacklogTab = new Slick.Data.DataView();
         var gridForBacklogOrder = new Slick.Grid(backlogOrdersObject.div, dataViewForBacklogTab, backlogOrdersObject.columns,options);
         createGrid(gridForBacklogOrder, dataViewForBacklogTab, backlogOrdersObject, onRowSelection);

@@ -36,14 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
-import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.BiologistRejected;
-import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.Finalized;
-import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.FinalizedRO;
-import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.NotTested;
-import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.ReferedOut;
-import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.ReferredIn;
-import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.TechnicalAcceptance;
-import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.TechnicalRejected;
+import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.*;
+import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.AnalysisStatus.BiologistRejectedRO;
 import static us.mn.state.health.lims.statusofsample.util.StatusOfSampleUtil.getStatusID;
 
 public class OrderListDAOImpl implements OrderListDAO {
@@ -58,7 +52,7 @@ public class OrderListDAOImpl implements OrderListDAO {
     @Override
     public List<Order> getAllToday() {
         List<Order> orderList = new ArrayList<>();
-        String condition = "sample.accession_number is not null and analysis.status_id IN (" + getAllNonReferredAnalysisStatus() + ") ";
+        String condition = "sample.accession_number is not null and analysis.status_id IN (" + getAllAnalysisStatus() + ") ";
         String sqlForAllTestsToday = createSqlStringForTodayOrders(condition, "sample.accession_number");
         PreparedStatement preparedStatement = null;
         ResultSet todayAccessions = null;
@@ -83,7 +77,7 @@ public class OrderListDAOImpl implements OrderListDAO {
 
     @Override
     public List<Order> getAllPendingBeforeToday() {
-        String condition = "sample.accession_number is not null and analysis.status_id IN (" + getAllNonReferredAnalysisStatus() + ")";
+        String condition = "sample.accession_number is not null and analysis.status_id IN (" + getAllAnalysisStatus() + ")";
         return getOrders(createSqlStringForPendingOrders(condition, "sample.accession_number"));
     }
 
@@ -184,6 +178,7 @@ public class OrderListDAOImpl implements OrderListDAO {
                             accessionResultSet.getBoolean("is_printed"),
                             accessionResultSet.getInt("pending_tests_count"),
                             accessionResultSet.getInt("pending_validation_count"),
+                            accessionResultSet.getInt("referred_test_count"),
                             accessionResultSet.getInt("total_test_count"),
                             accessionResultSet.getDate("collection_date"),
                             accessionResultSet.getDate("entered_date"),
@@ -219,6 +214,25 @@ public class OrderListDAOImpl implements OrderListDAO {
 
     private String getAllNonReferredAnalysisStatus() {
         return getAnalysisStatus(BiologistRejected, getStatusID(NotTested), TechnicalAcceptance, TechnicalRejected, Finalized);
+    }
+    private String getAllAnalysisStatus() {
+        List<Object> analysisStatuses = new ArrayList<>();
+        analysisStatuses.add(parseInt(getStatusID(ReferedOut)));
+        analysisStatuses.add(parseInt(getStatusID(ReferredIn)));
+        analysisStatuses.add(parseInt(getStatusID(TechnicalAcceptanceRO)));
+        analysisStatuses.add(parseInt(getStatusID(BiologistRejectedRO)));
+        analysisStatuses.add(parseInt(getStatusID(FinalizedRO)));
+        analysisStatuses.add(getAnalysisStatus(BiologistRejected, getStatusID(NotTested), TechnicalAcceptance, TechnicalRejected, Finalized));
+        return StringUtils.join(analysisStatuses.iterator(), ',');
+    }
+    private String getReferredAnalysisStatus() {
+        List<Object> analysisStatuses = new ArrayList<>();
+        analysisStatuses.add(parseInt(getStatusID(ReferedOut)));
+        analysisStatuses.add(parseInt(getStatusID(ReferredIn)));
+        analysisStatuses.add(parseInt(getStatusID(TechnicalAcceptanceRO)));
+        analysisStatuses.add(parseInt(getStatusID(BiologistRejectedRO)));
+        analysisStatuses.add(parseInt(getStatusID(FinalizedRO)));
+        return StringUtils.join(analysisStatuses.iterator(), ',');
     }
 
     private String getPendingValidationAnalysisStatus() {
@@ -263,6 +277,7 @@ public class OrderListDAOImpl implements OrderListDAO {
                 "sample_source.name AS sample_source, \n" +
                 "SUM(CASE WHEN  analysis.status_id IN (" + getPendingAnalysisStatus() + ") THEN 1 ELSE 0 END) as pending_tests_count,\n" +
                 "SUM(CASE WHEN  analysis.status_id IN ("+ getPendingValidationAnalysisStatus() + ") THEN 1 ELSE 0 END) as pending_validation_count,\n" +
+                "SUM(CASE WHEN  analysis.status_id IN ("+ getReferredAnalysisStatus() + ") THEN 1 ELSE 0 END) as referred_Test_count,\n" +
                 "string_agg(analysis.comment, '" + COMMENT_SEPARATOR + "') AS analysis_comments,\n" +
                 "COUNT(test.id) AS total_test_count,\n" +
                 "CASE WHEN document_track.report_generation_time is null THEN false ELSE true END as is_printed\n" +
@@ -299,6 +314,7 @@ public class OrderListDAOImpl implements OrderListDAO {
                 "sample_source.name AS sample_source, \n" +
                 "SUM(CASE WHEN  analysis.status_id IN (" + getPendingAnalysisStatus() + ") THEN 1 ELSE 0 END) as pending_tests_count,\n" +
                 "SUM(CASE WHEN  analysis.status_id IN ("+ getPendingValidationAnalysisStatus() + ") THEN 1 ELSE 0 END) as pending_validation_count,\n" +
+                "SUM(CASE WHEN  analysis.status_id IN ("+ getReferredAnalysisStatus() + ") THEN 1 ELSE 0 END) as referred_Test_count,\n" +
                 "string_agg(analysis.comment, '" + COMMENT_SEPARATOR + "') AS analysis_comments,\n" +
                 "COUNT(test.id) AS total_test_count,\n" +
                 "CASE WHEN COUNT(analysis.id) = SUM(CASE WHEN  analysis.status_id IN (" +getCompletedStatus()+ ") THEN 1 ELSE 0 END) THEN true ELSE false END as is_completed,\n" +
