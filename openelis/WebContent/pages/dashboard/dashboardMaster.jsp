@@ -22,6 +22,7 @@ String basePath = "";
 String serverNow = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
 Boolean alwaysValidate = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.ALWAYS_VALIDATE_RESULTS, "true");
 Boolean showReferredTestsCount = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.SHOW_REFERRED_TESTS_COUNT, "true");
+Boolean showPatientsDetailsInSampleLabelPrint = ConfigurationProperties.getInstance().isPropertyValueEqual(ConfigurationProperties.Property.SHOW_PATIENT_DETAILS_SAMPLE_LABEL_PRINT, "true");
 %>
 
 <%
@@ -146,41 +147,36 @@ basePath = path + "/";
         </div>
     </div>
 
-    <div id="myModal" class="hide details">
+    <div id="labelPrintModel" class="hide details">
         <div class="modal-content">
-
-            <div class="col-12" style= " display: inline-block; margin-right: 10px;">
-                <div id="labelDetails" >
-                    <div style="font-family: sans-serif; font-size: 8px; margin-right: 15px; margin-top:-4px;  height: 15px; margin-bottom: 2px"><span class='label-value' id="patientName"></span>
-
-                        <span  class='label-value' style="padding-left:5px;" id="patientGender"></span>
+            <div class="col-12" style=" display: inline-block; margin-right: 10px;">
+                <div id="labelDetails">
+                    <div style="font-family: sans-serif; font-size: 8px; margin-right: 15px; margin-top:-4px;  height: 15px; margin-bottom: 2px">
+                        <span class='label-value' id="patientName"></span>
+                        <span class='label-value' style="padding-left:5px;" id="patientGender"></span>
                         <span class='label-value' style="padding-left:5px;" id="patientAge"></span>
-
                         <br/>
-                        <span class='label-value' id="patientId"></span>
+                        <span class='label-value' id="labelPatientId"></span>
                         <span class='label-value' style="padding-left:20px;" id="collectionDate"></span>
                     </div>
-                    <svg style="margin-left:-10px;margin-bottom:-20px;padding:-18px;height:50px;"id="barcode"></svg>
+                    <svg style="margin-left:-10px;margin-bottom:-20px;padding:-18px;height:50px;" id="barcode"></svg>
                 </div>
             </div>
-
-
-
-            <div class="col-12" style= " display: inline-block;">
-                <div id="labelDetails2">
-                    <div style="font-family: sans-serif; font-size: 8px; margin-right: 20px; margin-top: -4px;  height: 15px; margin-bottom: 2px"><span class='label-value' id="patientName2"></span>
-
-                        <span  class='label-value'style="padding-left:5px;" id="patientGender2"></span>
-                        <span class='label-value' style="padding-left:5px;" id="patientAge2"></span>
+            <div class="col-12" style=" display: inline-block;">
+                <div id="secondLabelDetails">
+                    <div style="font-family: sans-serif; font-size: 8px; margin-right: 20px; margin-top: -4px;  height: 15px; margin-bottom: 2px">
+                        <span class='label-value' id="secondLabelPatientName"></span>
+                        <span class='label-value' style="padding-left:5px;" id="secondLabelPatientGender"></span>
+                        <span class='label-value' style="padding-left:5px;" id="secondLabelPatientAge"></span>
                         <br/>
-                        <span class='label-value' id="patientId2"></span>
-                        <span class='label-value' style="padding-left:20px;" id="collectionDate2"></span></div>
-
-                    <svg style="margin-left:-10px;margin-bottom:-20px;padding:-18px;height:50px;" id="barcode2"></svg>
+                        <span class='label-value' id="secondLabelPatientId"></span>
+                        <span class='label-value' style="padding-left:20px;" id="secondLabelCollectionDate"></span>
+                    </div>
+                    <svg style="margin-left:-10px;margin-bottom:-20px;padding:-18px;height:50px;"
+                         id="secondLabelBarcode"></svg>
                 </div>
             </div>
         </div>
-
     </div>
 
 
@@ -307,8 +303,8 @@ basePath = path + "/";
         });
         jQuery(".label").click(function(event){
             var accessionNumber= event.target.parentElement.getAttribute('accessionNumber');
-            var collectionDate=event.target.parentElement.getAttribute('collectionDate');
-            labelSelected(event.target.parentElement.getAttribute('stNumber'), accessionNumber,collectionDate, jQuery)
+            var collectionDateTime=event.target.parentElement.getAttribute('collectionDate');
+            labelSelected(event.target.parentElement.getAttribute('stNumber'), accessionNumber,collectionDateTime, jQuery)
         });
 
 
@@ -316,75 +312,58 @@ basePath = path + "/";
 
 
 
-    var printDiv = function printDiv(divId)
-    {
-
+    var printDiv = function printDiv(divId) {
         var divToPrint=document.getElementById(divId);
-
-
         var newWin=window.open('','Print-Window');
-
         newWin.document.open();
-
         newWin.document.write('<html><head><style>@media print {@page {size:100mm 20mm;margin:0mm;font-size:7px;}}</style></head><body onload="window.print()">'+divToPrint.innerHTML+'</body></html>');
-
         newWin.document.close();
-
         setTimeout(function(){newWin.close();},10);
-
     }
 
 
 
     var showLabelDetails = function(firstName, middleName, lastName,gender, age,stn,collectionDate) {
         jQuery("#patientName").text(firstName + " " + lastName[0]);
-        jQuery("#patientName2").text(firstName + " " + lastName[0]);
-        if(gender==='M')
-        {
+        jQuery("#secondLabelPatientName").text(firstName + " " + lastName[0]);
+        if(gender==='M') {
             gender='Male'
         }
-        if(gender==='F')
-        {
+        if(gender==='F') {
             gender='Female'
         }
-        if(gender=='O')
-        {
+        if(gender=='O') {
             gender='Other'
         }
-
         jQuery("#patientGender").text(gender);
-        jQuery("#patientGender2").text(gender);
+        jQuery("#secondLabelPatientGender").text(gender);
         jQuery("#patientAge").text(age);
-        jQuery("#patientAge2").text(age);
-        jQuery('#patientId').text(stn);
-        jQuery('#patientId2').text(stn);
+        jQuery("#secondLabelPatientAge").text(age);
+        jQuery('#labelPatientId').text(stn);
+        jQuery('#secondLabelPatientId').text(stn);
         jQuery('#collectionDate').text(collectionDate);
-        jQuery('#collectionDate2').text(collectionDate);
-
-    }
-var showLabelDetailsWithoutPatientDetails = function(stn,collectionDate) {
-        jQuery('#patientId').text(stn);
-        jQuery('#patientId2').text(stn);
-        jQuery('#collectionDate').text(collectionDate);
-        jQuery('#collectionDate2').text(collectionDate);
+        jQuery('#secondLabelCollectionDate').text(collectionDate);
 
     }
 
-    function labelSelected(stNumber, an,collectionDate,jQuery) {
+    var showLabelDetailsWithoutPatientDetails = function(stn,collectionDate) {
+        jQuery('#labelPatientId').text(stn);
+        jQuery('#secondLabelPatientId').text(stn);
+        jQuery('#collectionDate').text(collectionDate);
+        jQuery('#secondLabelCollectionDate').text(collectionDate);
+
+    }
+
+    function labelSelected(stNumber, an,collectionDateTime,jQuery) {
         new Ajax.Request ('ajaxQueryXML', {
             method: 'get',
             parameters: "provider=PatientSearchPopulateProvider&stNumber=" + stNumber,
             onSuccess:  function onLabelSelected(xhr) {
                 var datePattern = '<%=SystemConfiguration.getInstance().getPatternForDateLocale() %>';
-                var coDate=collectionDate.slice(0,10);
-                coDate=coDate.split("-");
-                console.log(coDate);
-                coDate=coDate[2]+"/"+coDate[1]+"/"+coDate[0];
-                var cotime=OpenElis.Utils.getTime(collectionDate.slice(11,19));
-                collectionDate=coDate+" "+cotime;
-
-
-                var showPatientDetails = '<%=SystemConfiguration.getInstance().showPatientDetailsInSampleLabelPrint()%>';
+                var collectionDate=collectionDateTime.slice(0,10);
+                var collectionTime=OpenElis.Utils.getTime(collectionDateTime.slice(11,19));
+                collectionDateTime=collectionDate+" "+collectionTime;
+                var showPatientDetails = '<%=showPatientsDetailsInSampleLabelPrint%>';
                 if(showPatientDetails==='true') {
                     showLabelDetails(
                         OpenElis.Utils.getXMLValue(xhr.responseXML, 'firstName'),
@@ -393,12 +372,10 @@ var showLabelDetailsWithoutPatientDetails = function(stn,collectionDate) {
                         OpenElis.Utils.getXMLValue(xhr.responseXML, 'gender'),
                         OpenElis.Utils.calculateAge(OpenElis.Utils.getXMLValue(xhr.responseXML, 'dob'), datePattern),
                         stNumber,
-                        collectionDate
+                        collectionDateTime
                     );
-                }
-                else
-                {
-                    showLabelDetailsWithoutPatientDetails(stNumber,collectionDate);
+                } else {
+                    showLabelDetailsWithoutPatientDetails(stNumber,collectionDateTime);
 
                 }
                 jQuery(".accessionNumber").html(an);
@@ -407,12 +384,12 @@ var showLabelDetailsWithoutPatientDetails = function(stn,collectionDate) {
                     height:25,
                     fontSize: 9
                 });jQuery(".accessionNumber").html(an);
-                jQuery("#barcode2").JsBarcode(an,{
+                jQuery("#secondLabelBarcode").JsBarcode(an,{
                     width:1.1,
                     height:25,
                     fontSize: 9
                 });
-                printDiv('myModal');
+                printDiv('labelPrintModel');
             }
         });
     }

@@ -81,6 +81,7 @@ public abstract class ConfigurationProperties {
 							 QA_SORT_EVENT_LIST,
 							 ALWAYS_VALIDATE_RESULTS,
 							 SHOW_REFERRED_TESTS_COUNT,
+							 SHOW_PATIENT_DETAILS_SAMPLE_LABEL_PRINT,
 							 ADDITIONAL_SITE_INFO,
                              RESULTS_VALIDATION_PAGE_SIZE,
                              RESULTS_PAGE_SIZE,
